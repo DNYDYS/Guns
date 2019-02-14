@@ -32,6 +32,13 @@ hs_err_pid*
 .project
 .settings/
 
+<<<<<<< HEAD
 # IntelliJ project files
 out
 gen
+=======
+
+.DS_Store
+
+_dockerCerts/
+>>>>>>> 23f66321a49e1f8e402aed77ba09fcaa410f483c

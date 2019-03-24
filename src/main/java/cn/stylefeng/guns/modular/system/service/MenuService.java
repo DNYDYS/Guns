@@ -6,19 +6,22 @@ import cn.stylefeng.guns.core.common.constant.state.MenuStatus;
 import cn.stylefeng.guns.core.common.exception.BizExceptionEnum;
 import cn.stylefeng.guns.core.common.node.MenuNode;
 import cn.stylefeng.guns.core.common.node.ZTreeNode;
+import cn.stylefeng.guns.core.common.page.LayuiPageFactory;
+import cn.stylefeng.guns.core.listener.ConfigListener;
 import cn.stylefeng.guns.modular.system.entity.Menu;
 import cn.stylefeng.guns.modular.system.mapper.MenuMapper;
 import cn.stylefeng.guns.modular.system.model.MenuDto;
 import cn.stylefeng.roses.core.util.ToolUtil;
 import cn.stylefeng.roses.kernel.model.exception.RequestEmptyException;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +63,67 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
 
         resultMenu.setStatus(MenuStatus.ENABLE.getCode());
 
-        this.insert(resultMenu);
+        this.save(resultMenu);
+    }
+
+    /**
+     * 更新菜单
+     *
+     * @author fengshuonan
+     * @Date 2019/2/27 4:09 PM
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateMenu(MenuDto menuDto) {
+
+        //如果菜单为空
+        if (menuDto == null || ToolUtil.isOneEmpty(menuDto.getMenuId(), menuDto.getCode())) {
+            throw new RequestEmptyException();
+        }
+
+        //获取旧的菜单
+        Long id = menuDto.getMenuId();
+        Menu menu = this.getById(id);
+
+        if (menu == null) {
+            throw new RequestEmptyException();
+        }
+
+        //如果菜单编号修改了，则遍历该菜单的所有子菜单，把对应的编码改了
+        if (!menu.getCode().equals(menuDto.getCode())) {
+            this.updateSubMenuCodes(menu.getCode(), menuDto.getCode());
+        }
+
+        //设置父级菜单编号
+        Menu resultMenu = this.menuSetPcode(menuDto);
+
+        this.updateById(resultMenu);
+    }
+
+    /**
+     * 更新所有子菜单的编码
+     *
+     * @param code    原编码
+     * @param newCode 新编码
+     * @author fengshuonan
+     * @Date 2019/2/27 4:25 PM
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateSubMenuCodes(String code, String newCode) {
+
+        QueryWrapper<Menu> wrapper = new QueryWrapper<>();
+        wrapper = wrapper.like("PCODES", "%[" + code + "]%");
+        List<Menu> menus = menuMapper.selectList(wrapper);
+
+        for (Menu menu : menus) {
+            if (code.equals(menu.getPcode())) {
+                menu.setPcode(newCode);
+            }
+            String pcodes = menu.getPcodes();
+            String resultPcodes = pcodes.replaceFirst("\\[" + code + "\\]", "\\[" + newCode + "\\]");
+            menu.setPcodes(resultPcodes);
+            this.updateById(menu);
+        }
+
     }
 
     /**
@@ -94,7 +157,7 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
         delMenu(menuId);
 
         //删除所有子菜单
-        Wrapper<Menu> wrapper = new EntityWrapper<>();
+        QueryWrapper<Menu> wrapper = new QueryWrapper<>();
         wrapper = wrapper.like("PCODES", "%[" + menu.getCode() + "]%");
         List<Menu> menus = menuMapper.selectList(wrapper);
         for (Menu temp : menus) {
@@ -108,16 +171,18 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
      * @return
      * @date 2017年2月12日 下午9:14:34
      */
-    public List<Map<String, Object>> selectMenus(String condition, String level, Long menuId) {
+    public Page<Map<String, Object>> selectMenus(String condition, String level, Long menuId) {
 
         //获取menuId的code
         String code = "";
-        if (menuId != null) {
-            Menu menu = this.selectById(menuId);
+        if (menuId != null && menuId != 0L) {
+            Menu menu = this.getById(menuId);
             code = menu.getCode();
         }
 
-        return this.baseMapper.selectMenus(condition, level, menuId, code);
+        Page page = LayuiPageFactory.defaultPage();
+
+        return this.baseMapper.selectMenus(page, condition, level, menuId, code);
     }
 
     /**
@@ -180,7 +245,14 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
      * @date 2017年2月19日 下午10:35:40
      */
     public List<MenuNode> getMenusByRoleIds(List<Long> roleIds) {
-        return this.baseMapper.getMenusByRoleIds(roleIds);
+        List<MenuNode> menus = this.baseMapper.getMenusByRoleIds(roleIds);
+
+        //给所有的菜单url加上ctxPath
+        for (MenuNode menuItem : menus) {
+            menuItem.setUrl(ConfigListener.getConf().get("contextPath") + menuItem.getUrl());
+        }
+
+        return menus;
     }
 
     /**
@@ -192,7 +264,8 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
     public Menu selectByCode(String code) {
         Menu menu = new Menu();
         menu.setCode(code);
-        return this.baseMapper.selectOne(menu);
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>(menu);
+        return this.baseMapper.selectOne(queryWrapper);
     }
 
     /**
@@ -212,7 +285,7 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
             resultMenu.setLevels(1);
         } else {
             Long pid = menuParam.getPid();
-            Menu pMenu = this.selectById(pid);
+            Menu pMenu = this.getById(pid);
             Integer pLevels = pMenu.getLevels();
             resultMenu.setPcode(pMenu.getCode());
 
@@ -226,6 +299,31 @@ public class MenuService extends ServiceImpl<MenuMapper, Menu> {
         }
 
         return resultMenu;
+    }
+
+    /**
+     * 获取菜单树形列表
+     *
+     * @author fengshuonan
+     * @Date 2019/2/23 22:02
+     */
+    public List<Map<String, Object>> selectMenuTree(String condition, String level) {
+        List<Map<String, Object>> maps = this.baseMapper.selectMenuTree(condition, level);
+
+        if (maps == null) {
+            maps = new ArrayList<>();
+        }
+
+        //创建根节点
+        Menu menu = new Menu();
+        menu.setMenuId(-1L);
+        menu.setName("根节点");
+        menu.setCode("0");
+        menu.setPcode("-2");
+
+        maps.add(BeanUtil.beanToMap(menu));
+
+        return maps;
     }
 
 }

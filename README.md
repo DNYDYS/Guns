@@ -21,10 +21,10 @@
         </a>    
         +
         <a href="http://spring.io/projects/spring-boot">
-            <img src="https://img.shields.io/badge/spring--boot-2.0.1-green.svg" alt="spring-boot">
+            <img src="https://img.shields.io/badge/spring--boot-2.1.1-green.svg" alt="spring-boot">
         </a>
         <a href="http://mp.baomidou.com">
-            <img src="https://img.shields.io/badge/mybatis--plus-2.3-blue.svg" alt="mybatis-plus">
+            <img src="https://img.shields.io/badge/mybatis--plus-3.0-blue.svg" alt="mybatis-plus">
         </a>  
         <a href="http://ibeetl.com/">
             <img src="https://img.shields.io/badge/beetl-2.9.3-yellow.svg" alt="beetl">
@@ -40,21 +40,35 @@
 ### Guns 旗舰版在线demo
 账号密码：admin/111111，地址：http://demo.stylefeng.cn
 
-### 最新Guns技术文档和视频教程
-Guns框架有作者在业余时间整理的技术文档，详情点击[技术文档](https://gitee.com/stylefeng/guns/wikis/pages?title=Guns%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3&parent=)
+#### 阿里云5折优惠券
+https://www.aliyun.com/acts/product-section-2019/new-users?spm=5176.11533457.1089570.1.226d77e3EWv1Wn&userCode=p4kqz45e
 
-Guns框架有作者在业余时间录制的视频教程，详情点击[视频教程](https://gitee.com/stylefeng/guns/wikis/pages?title=Guns%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B&parent=)
+### Guns VIP计划
+Guns VIP计划，详情点击[https://www.stylefeng.cn/gunsVIP](https://www.stylefeng.cn/gunsVIP)
+
+买vip送最新Guns技术文档和视频教程，[点击查看技术文档](https://gitee.com/stylefeng/guns/wikis/pages?title=Guns%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3&parent=)，[点击查看视频教程](https://gitee.com/stylefeng/guns/wikis/pages?title=Guns%E8%A7%86%E9%A2%91%E6%95%99%E7%A8%8B&parent=)
+
+### Roses企业级微服务视频教程
+Roses企业级微服务视频教程，详情点击[https://www.stylefeng.cn/rosesVideo](https://www.stylefeng.cn/rosesVideo)
 
 ### Guns历史版本
 
 | 版本名称 | 说明 | 地址 |
 | :---: | :---: | :---: |
-| Guns旗舰版 v1.0 | 全新的UI界面，采用bootstrap 4 + vue，全新的规范化的数据库设计，demo地址：http://demo.stylefeng.cn | https://gitee.com/stylefeng/guns |
+| Guns旗舰版 v2.0 | 基于layui的全新旗舰版，demo地址：http://demo.stylefeng.cn | https://gitee.com/stylefeng/guns/tree/ultimate-v2.0/ |
+| Guns旗舰版 v1.1 | 全面升级spring boot和mybatis-plus版本 | https://gitee.com/stylefeng/guns/tree/ultimate-v1.1/ |
+| Guns旗舰版 v1.0 | 全新的UI界面，采用bootstrap 4 + vue，全新的规范化的数据库设计 | https://gitee.com/stylefeng/guns/tree/ultimate-v1.0/ |
 | Guns v5.1 | Guns经典版的最新版，采用bootstrap 3 | https://gitee.com/stylefeng/guns/tree/v5.1-final |
 | Guns v4.2 | spring boot升级到了2.0，大大简化了前端的体积，升级了一些组件到最新版本 | https://gitee.com/stylefeng/guns/tree/v4.2 |
 | Guns v3.3 | 模块化了整个项目，整体拆分成4个模块，增加了jwt，并集成工作流flowable 6.2.0 | https://gitee.com/stylefeng/guns/tree/v3.3 |
 | Guns v2.4 | 基于spring boot全面升级，更加简化配置和依赖，更专注于开发业务 | https://gitee.com/stylefeng/guns/tree/v2.4/ |
 | Guns v1.0 | Guns的第一个版本，率先采用spring java bean方式的配置，零spring xml配置，spring用到极致 | https://gitee.com/stylefeng/guns/tree/v1.0/ |
+
+### Guns前端模板
+Guns最新旗舰版，所用前端模板为EasyWeb后台开发框架,官网地址为：[https://easyweb.vip/](https://easyweb.vip/)，使用时已征求作者允许。
+
+### 如有帮助，请多star
+Guns从2017年开源以来，从最初的1.0版本发展到现在的旗舰版2.0，中间历经了十几个版本，一直坚持更新，尽力做到更好！如果Guns对您有所帮助，请`star`一下项目！支持一下作者！感谢！
 
 ### Guns微服务版本
 
@@ -206,4 +220,4 @@ jwt token鉴权机制是指若需要请求服务器接口，必须通过AuthCont
 
 ### stylefeng开源技术
 
-官网：http://stylefeng.cn/
+官网：https://www.stylefeng.cn/
